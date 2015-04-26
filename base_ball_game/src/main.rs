@@ -1,6 +1,7 @@
 use std::io;
 use std::io::Write;
-
+extern crate rand;
+use rand::distributions::{IndependentSample, Range};
 
 struct SBO {
     strike: i8,
@@ -16,9 +17,17 @@ fn main() {
 
     
     let mut inputs:Vec<i8> = vec![];
-//TODO generate random data
-    let answers:Vec<i8> = vec![1,2,3]; 
+    let mut answers:Vec<i8> = vec![]; 
     let mut sbo = SBO{strike:0, ball:0, out:0};
+
+//TODO Modulization
+//TODO remove overlapped value in answers
+    let between = Range::new(1i8, 10);
+    let mut rng = rand::thread_rng();
+    for i in 0..3 {
+        answers.push(between.ind_sample(&mut rng));
+    }
+
 
     loop {
 //TODO Modulization
@@ -35,19 +44,14 @@ fn main() {
         match int_value {
             Some(value) => {
                 inputs.push(value);
-                print!("int value = {}", value);
-                io::stdout().flush();
             },
             None => continue
         }
-        print!("input data : {}", input);
 
         if current_input_size == 2{
             break;
         }
     }
-
-    print!("빠져나왔습니다");
 
 //Check input data
 //TODO Modulization
@@ -74,7 +78,7 @@ fn main() {
             sbo.out += 1;
         }
     }
-
-    print!("s : {}, b : {}, o : {}", sbo.strike, sbo.ball, sbo.out);
+    println!("correct answer : {}. {}. {}", answers[0], answers[1],answers[2]);
+    println!("\nGame result\n-----------  \ns : {}\nb : {}\no : {}", sbo.strike, sbo.ball, sbo.out);
 
 }
