@@ -23,22 +23,24 @@ fn main() {
     inputs = gen_array_from_user(3);
 
     //Check input data
-    let sbo = get_sbo_result(&inputs, &answers);
+    let sbo = get_sbo_result(inputs, &answers);
 
     println!("correct answer : {}. {}. {}", answers[0], answers[1],answers[2]);
     println!("\nGame result\n-----------  \ns : {}\nb : {}\no : {}", sbo.strike, sbo.ball, sbo.out);
 
 }
 
-//TODO remove overlapped value in answers
 fn gen_rand_array(arr: &mut Vec<i8>, len: i8, range: Range<i8>) {
     let mut rng = rand::thread_rng();
 
-    for i in 0..len {
-        (*arr).push(range.ind_sample(&mut rng));
+    while (arr.len() != 3) {
+        let rand_num = range.ind_sample(&mut rng);
+        if (*arr).contains(&rand_num) {
+            continue;
+        } else { 
+            (*arr).push(rand_num);
+        }
     }
-
-    
 }
 
 //TODO input data validation
@@ -71,16 +73,16 @@ fn gen_array_from_user(len: usize) -> Vec<i8> {
 }
 
 //TODO Modulization
-fn get_sbo_result(inputs :&Vec<i8>, answers :&Vec<i8>) -> SBO {
+fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
     let mut sbo = SBO{strike:0, ball:0, out:0};
     let mut is_heat = false;
     let mut answer_value: i8 = 0;
     let mut input_value: i8 = 0;
-    for answer_index in 0..(*answers).len() {
-        answer_value = (*answers)[answer_index];
+    for answer_index in 0..(answers).len() {
+        answer_value = (answers)[answer_index];
         
-        for input_index in 0..(*inputs).len() {
-            input_value = (*inputs)[input_index];
+        for input_index in 0..(inputs).len() {
+            input_value = (inputs)[input_index];
             if answer_value == input_value {
                 if answer_index == input_index {
                     sbo.strike += 1;
