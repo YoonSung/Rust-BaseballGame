@@ -43,7 +43,7 @@ fn gen_rand_array(arr: &mut Vec<i8>, len: i8, range: Range<i8>) {
     }
 }
 
-//TODO input data validation
+//TODO const number 3
 fn gen_array_from_user(len: usize) -> Vec<i8> {
     let mut return_arr:Vec<i8> = vec![];
 
@@ -58,10 +58,13 @@ fn gen_array_from_user(len: usize) -> Vec<i8> {
         let int_value: Option<i8> = input.trim().parse().ok();
 
         match int_value {
-            Some(value) => {
-                return_arr.push(value);
+            value @ Some(1...9) => {
+                return_arr.push(value.unwrap());
             },
-            None => continue
+            Some(_)|None => {
+                println!("only Input Between 1 to 10 number!");
+                continue;
+            }
         }
 
         if current_input_size == len-1 {
