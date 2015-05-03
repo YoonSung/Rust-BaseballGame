@@ -17,10 +17,8 @@ fn main() {
     println!("       숫자 야구게임       ");
     println!("========================");
 
-    let mut answers:Vec<i8> = vec![]; 
-
     let between = Range::new(1i8, 10);
-    gen_rand_array(&mut answers, INNING_INPUT_LIMIT, between); 
+    let answers:Vec<i8> = gen_rand_array(INNING_INPUT_LIMIT, between); 
     let inputs = gen_array_from_user(INNING_INPUT_LIMIT);
 
     //Check input data
@@ -31,17 +29,20 @@ fn main() {
 
 }
 
-fn gen_rand_array(arr: &mut Vec<i8>, len: usize, range: Range<i8>) {
+fn gen_rand_array(len: usize, range: Range<i8>) -> Vec<i8> {
     let mut rng = rand::thread_rng();
+    let mut rand_array = Vec::new();
 
-    while arr.len() != len {
+    while rand_array.len() != len {
         let rand_num = range.ind_sample(&mut rng);
-        if (*arr).contains(&rand_num) {
+        if rand_array.contains(&rand_num) {
             continue;
         } else { 
-            (*arr).push(rand_num);
+           rand_array.push(rand_num);
         }
     }
+
+    rand_array
 }
 
 #[allow(unused_must_use)]
@@ -76,46 +77,18 @@ fn gen_array_from_user(len: usize) -> Vec<i8> {
 }
 
 //@see https://github.com/csherratt/gl-rs/commit/fcedd846c40ad6759b4a9cca69ff8f72b62a07b2
-//fn each_iterator_do<F>(arr: Vec<i8>, execute: F) where F: Fn(usize, &i8) {
-fn each_iterator_do<F>(arr: &Vec<i8>, mut execute: F) where F: FnMut(&i8, usize) {
+fn each_iterator_do<F>(arr: &Vec<i8>, mut execute: F) where F: FnMut(i8, usize) {
     for (index, value) in arr.iter().enumerate() {
-        execute(value, index);
+        execute(*value, index);
     }
 }
-
-//TODO use closure
-/*
-fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
-    let mut sbo = SBO{strike:0, ball:0, out:0};
-    let mut is_heat = false;
-    for (answer_index, answer_value) in answers.iter().enumerate() {
-        for (input_index, input_value) in inputs.iter().enumerate() {
-            if answer_value == input_value {
-                if answer_index == input_index {
-                    sbo.strike += 1;
-                    is_heat = true;
-                } else {
-                    sbo.ball += 1;
-                    is_heat = true;
-                } 
-            }
-        }
-        
-        if is_heat == false {
-            sbo.out += 1;
-        }
-    }
-    
-    sbo
-}
-*/
 
 fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
     let mut sbo = SBO{strike:0, ball:0, out:0};
 
-    each_iterator_do(&inputs, |input_value, input_index| {
-        if answers.contains(input_value) == true {
-            if answers[input_index] == input_value {
+    each_iterator_do(&inputs, |value, index| {
+        if answers.contains(&value) == true {
+            if answers[index] == value {
                 sbo.strike += 1;
             } else {
                 sbo.ball += 1;
