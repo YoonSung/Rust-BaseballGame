@@ -112,25 +112,18 @@ fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
 
 fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
     let mut sbo = SBO{strike:0, ball:0, out:0};
-    let mut is_heat = false;
-    //for (answer_value, answer_index) in answers.iter().enumerate() {
-    each_iterator_do(&(answers), |answer_value, answer_index| {
-        each_iterator_do(&inputs, |input_value, input_index| {
-            if answer_value == input_value {
-                if answer_index == input_index {
-                    sbo.strike += 1;
-                    is_heat = true;
-                } else {
-                    sbo.ball += 1;
-                    is_heat = true;
-                } 
+
+    each_iterator_do(&inputs, |input_value, input_index| {
+        if answers.contains(input_value) == true {
+            if answers[input_index] == input_value {
+                sbo.strike += 1;
+            } else {
+                sbo.ball += 1;
             }
-        });      
-        if is_heat == false {
+
+        } else {
             sbo.out += 1;
         }
-
-        is_heat = false;
     });
 
     sbo
