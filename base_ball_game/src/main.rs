@@ -62,6 +62,7 @@ fn gen_array_from_user(len: usize) -> Vec<i8> {
 
         match int_value {
             value @ Some(1...9) => {
+                //TODO already exist value check
                 return_arr.push(value.unwrap());
             },
             Some(_)|None => {
@@ -76,18 +77,19 @@ fn gen_array_from_user(len: usize) -> Vec<i8> {
 
 //@see https://github.com/csherratt/gl-rs/commit/fcedd846c40ad6759b4a9cca69ff8f72b62a07b2
 //fn each_iterator_do<F>(arr: Vec<i8>, execute: F) where F: Fn(usize, &i8) {
-fn each_iterator_do<F>(arr: &Vec<i8>, mut execute: F) where F: FnMut(usize, &i8) {
-    for (value, index) in arr.iter().enumerate() {
+fn each_iterator_do<F>(arr: &Vec<i8>, mut execute: F) where F: FnMut(&i8, usize) {
+    for (index, value) in arr.iter().enumerate() {
         execute(value, index);
     }
 }
 
+//TODO use closure
 /*
 fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
     let mut sbo = SBO{strike:0, ball:0, out:0};
     let mut is_heat = false;
-    for (answer_value, answer_index) in answers.iter().enumerate() {
-        for (input_value, input_index) in inputs.iter().enumerate() {
+    for (answer_index, answer_value) in answers.iter().enumerate() {
+        for (input_index, input_value) in inputs.iter().enumerate() {
             if answer_value == input_value {
                 if answer_index == input_index {
                     sbo.strike += 1;
@@ -111,7 +113,7 @@ fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
 fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
     let mut sbo = SBO{strike:0, ball:0, out:0};
     let mut is_heat = false;
-    
+    //for (answer_value, answer_index) in answers.iter().enumerate() {
     each_iterator_do(&(answers), |answer_value, answer_index| {
         each_iterator_do(&inputs, |input_value, input_index| {
             if answer_value == input_value {
@@ -123,12 +125,13 @@ fn get_sbo_result(inputs :Vec<i8>, answers :&Vec<i8>) -> SBO {
                     is_heat = true;
                 } 
             }
-        })      
-    });
+        });      
+        if is_heat == false {
+            sbo.out += 1;
+        }
 
-    if is_heat == false {
-        sbo.out += 1;
-    }
+        is_heat = false;
+    });
 
     sbo
 }
